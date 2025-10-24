@@ -9,3 +9,9 @@
     import 'relative/path/to/stylesheet.scss';
 
 */
+.close-button{
+    display: none;
+}
+.hide-button:hover .close-button{
+    display: block;
+}
