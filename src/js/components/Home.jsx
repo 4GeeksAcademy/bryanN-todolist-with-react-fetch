@@ -9,10 +9,8 @@ const Home = () => {
 
 	const [task, setTask] = useState('')
 	const [list, setList] = useState([])
+	cos
 
-	const getTask = (event) => {
-		setTask(event.target.value);
-	}
 	const addtoList = (event) => {
 		if (event.key === 'Enter') {
 			if (task !== '') {
@@ -22,6 +20,7 @@ const Home = () => {
 
 		}
 	}
+
 	const deleteTask = (tasktodelete) => {
 		setList(list.filter((_, i) => i !== tasktodelete))
 	}
@@ -30,11 +29,14 @@ const Home = () => {
 			return ('No Tasks')
 		} else if (list.length === 1) {
 			return ('1 Task')
-		} return (list.length + 'Tasks')
+		} return (list.length + ' Tasks')
 	}
-	const clearTasks =()=>{
-		setList([])
-	}
+
+
+
+
+
+
 
 	return (
 		<div>
@@ -43,8 +45,8 @@ const Home = () => {
 					<img src={rigoImage} />
 				</p>
 				<div className="flex-fill p-4 fs-1">
-					<label for="yourTask" className="form-label">What needs to be done?</label>
-					<input type="text" className="form-control" id="yourTask" value={task} onKeyDown={addtoList} onChange={getTask} placeholder="Your tasks here"></input>
+					<label htmlFor="yourTask" className="form-label">What needs to be done?</label>
+					<input type="text" className="form-control" id="yourTask" value={task} onKeyDown={addtoList} onChange={(e)=>setTask(e.target.value)} placeholder="Your tasks here"></input>
 				</div>
 			</div>
 			<div className="card m-4" style={{ width: "18rem" }}>
@@ -58,7 +60,7 @@ const Home = () => {
 				</ul>
 				<div className="ms-3 d-flex align-items-center justify-content-between">
 					<div>{tasksCounter()}</div>
-					<button type="button" onClick={()=>clearTasks()} className="btn btn-outline-warning">Clear Tasks</button>
+					<button type="button" onClick={() => setList([])} className="btn btn-outline-warning">Clear Tasks</button>
 				</div>
 			</div>
 		</div>
