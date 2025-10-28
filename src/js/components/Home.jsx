@@ -9,7 +9,7 @@ const Home = () => {
 
 	const [task, setTask] = useState('')
 	const [list, setList] = useState([])
-	cos
+	const API_URL = 'https://playground.4geeks.com/todo/'
 
 	const addtoList = (event) => {
 		if (event.key === 'Enter') {
@@ -32,7 +32,15 @@ const Home = () => {
 		} return (list.length + ' Tasks')
 	}
 
-
+	const createUser = async()=>{
+		try {
+			const response = await fetch(API + 'users/bruyi',{
+				method: 'POST',
+			})
+		} catch (error) {
+			
+		}
+	}
 
 
 
