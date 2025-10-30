@@ -14,14 +14,14 @@ const Home = () => {
 	const addtoList = (event) => {
 		if (event.key === 'Enter') {
 			if (task !== '') {
-				setList([...list, task]);
+				createTask(task)
 				setTask('');
 			}
 
 		}
 	}
 
-	const deleteTask = (tasktodelete) => {
+	const deleteTasks = (tasktodelete) => {
 		setList(list.filter((_, i) => i !== tasktodelete))
 	}
 	const tasksCounter = () => {
@@ -32,19 +32,83 @@ const Home = () => {
 		} return (list.length + ' Tasks')
 	}
 
-	const createUser = async()=>{
+	const createUser = async() => {
 		try {
-			const response = await fetch(API + 'users/bruyi',{
+			const response = await fetch(API_URL + 'users/bruyi',{
 				method: 'POST',
+				headers:{ 
+				'Content-Type': 'application/json'}
 			})
+			const data = await response.json()		
+			console.log("User successfuly created");
+			
 		} catch (error) {
+			console.error('There was an issue creating the user: ', error.message);
+			
+		}
+    }
+
+	const getList = async()=>{
+		try {
+			const response = await fetch(API_URL + 'users/bruyi',{
+				headers: {'Content-Type': 'application/json'}
+			})
+			if (response.status === 404) {
+				createUser()
+			}
+			const data = await response.json()
+			setList(data.todos)			
+		} catch (error) {
+			console.error('There was an issue: ', error);
 			
 		}
 	}
 
+	const createTask = async(text)=>{
+		try {
+			const response = await fetch(API_URL + 'todos/bruyi', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body : JSON.stringify({
+                    label: text,
+                    is_done: false
+                })
+			})
+			if (!response.ok) {
+				throw new Error(`Unable to complete task: ${response.status}`);
+			}
+			const data = await response.json()
+			console.log('Task created succesfuly');
+			await getList()
+			
+		} catch (error) {
+			console.error('There was an error creating the task', error);
+			
+		}
+	}
+
+	const deleteTask = async(id)=>{
+		try {
+			const response = await fetch(API_URL + `todos/${id}`, {
+				method: 'DELETE',
+				headers: {'Content-Type': 'application/json'},
+			})
+			if (!response.ok) {
+				throw new Error(`There was an error: ${response.status}`);	
+			}
+
+			console.log(`Task ${id} deleted successfuly`);
+			await getList()
+
+		} catch (error) {
+			console.error('There was an issue: ', error);
+		}
+	}
 
 
-
+	useEffect(()=>{
+		getList()
+	}, [])
 
 	return (
 		<div>
@@ -54,15 +118,15 @@ const Home = () => {
 				</p>
 				<div className="flex-fill p-4 fs-1">
 					<label htmlFor="yourTask" className="form-label">What needs to be done?</label>
-					<input type="text" className="form-control" id="yourTask" value={task} onKeyDown={addtoList} onChange={(e)=>setTask(e.target.value)} placeholder="Your tasks here"></input>
+					<input type="text" className="form-control" id="yourTask" value={task} onKeyDown={addtoList} onChange={(e) => setTask(e.target.value)} placeholder="Your tasks here"></input>
 				</div>
 			</div>
-			<div className="card m-4" style={{ width: "18rem" }}>
+			<div className="card m-4" style={{ width: "35rem" }}>
 				<ul className="list-group list-group-flush">
 					{list.map((lis, index) => (
-						<li className="list-group-item d-flex justify-content-between hide-button" key={index}>
-							<span>{lis}</span>
-							<button type="button" className="btn-close close-button" onClick={() => deleteTask(index)} aria-label="Close"></button>
+						<li className="list-group-item d-flex justify-content-between hide-button" key={lis.id}>
+							<span>{lis.label}</span>
+							<button type="button" className="btn-close close-button" onClick={() => deleteTask(lis.id)} aria-label="Close"></button>
 						</li>
 					))}
 				</ul>
